@@ -125,6 +125,7 @@ while True:
 | pin_sw       | pin  | None    | Pin buttons                            |
 | debounce_ms  | int  | 50      | Contact bounce timeout                 |
 | encoder_step | int  | 1       | Encoder step                           |
+| half_step    | bool | False   | Increment every 1/2 gray cycle         |
 | hold_ms      | int  | 1000    | Button hold timeout                    |
 | step_ms      | int  | 200     | Timeout between encoder events         |
 | fast_ms      | int  | 50      | Timeout between encoder events on hold |
@@ -137,6 +138,7 @@ while True:
 For example, if the step is 1, then each encoder event will fire a trigger.
 If the step is 2, then the trigger will fire on every second encoder event.
 Useful for compensating for encoder chatter.
+- `half_step` - increments every half-step. Added to support the KY-040 encoder, which only moves half a cycle (1 CLK + 1 DT transition) every physical detent. Allows intuitive operation when used for UI control. When this is true, the encoder_step units will be half-steps.
 - `hold_ms` - button hold timeout, if the button is held longer than this time, the `HELD` event will fire.
 - `step_ms` - timeout between multiple clicks, if click events occur faster than this time, the `MULTIPLE_CLICK` event will fire.
 - `fast_ms` - timeout between encoder events for fast scrolling `TURN_LEFT_FAST | TURN_RIGHT_FAST`.
