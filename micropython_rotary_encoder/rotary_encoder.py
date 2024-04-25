@@ -36,6 +36,9 @@ class RotaryEncoder:
     enc_step: int = 1
     "attribute EncoderButton.enc_step is used to filter out pin jitter"
 
+    half_step: bool = False
+    "attribute EncoderButton.half_step is used to +1/-1 increment for KY040 encoder 'half-step per click'"
+
     sw_hold_ms: int = 1000
     "attribute EncoderButton.sw_hold_ms is used to detect a long press"
 
@@ -79,6 +82,7 @@ class RotaryEncoder:
             pin_sw: Pin = None,
             debounce_ms: int = 50,
             encoder_step: int = 1,
+            half_step: bool = False, # support increment every click for KY040 encoder
             hold_ms: int = 1000,
             step_ms: int = 200,
             fast_ms: int = 50,
@@ -89,6 +93,7 @@ class RotaryEncoder:
         self.pin_sw = pin_sw
         self.sw_debounce_ms = debounce_ms
         self.enc_step = encoder_step
+        self.half_step=half_step
         self.sw_hold_ms = hold_ms
         self.sw_step_ms = step_ms
         self.enc_fast_ms = fast_ms
@@ -191,9 +196,9 @@ class RotaryEncoder:
             self._sw_held_with_encoder = True
 
         direction = 0
-        if transition == 0b1110:
+        if (transition == 0b1110) or (self.half_step and (transition == 0b0001)):
             direction = 1
-        elif transition == 0b1101:
+        elif (transition == 0b1101) or (self.half_step and (transition == 0b0010)):
             direction = -1
 
         if direction != 0:
